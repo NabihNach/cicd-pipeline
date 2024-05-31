@@ -1,0 +1,23 @@
+version: 0.2
+
+env:
+  secrets-manager:
+    DOCKER_USERNAME: dockerHubCredentials:DOCKER_USERNAME
+    DOCKER_PASSWORD: dockerHubCredentials:DOCKER_PASSWORD
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 14
+    commands:
+      - npm install
+  build:
+    commands:
+      - npm run build
+      - docker build -t your-dockerhub-username/simple-web-app .
+      - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+      - docker push your-dockerhub-username/simple-web-app
+
+artifacts:
+  files:
+    - '**/*'
